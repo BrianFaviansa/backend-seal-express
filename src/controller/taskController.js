@@ -37,13 +37,23 @@ const createTask = asyncHandler(async (req, res) => {
     );
   }
 
+  const project = await prisma.project.findUnique({
+    where: {
+      id: parseInt(projectId),
+    },
+  });
+
+  if (!project) {
+    throw new Error("Project not found");
+  }
+
   const newTask = await prisma.task.create({
     data: {
       name,
       description,
       status,
       projectId: parseInt(projectId),
-      userId,
+      userId: parseInt(userId),
     },
   });
 
@@ -82,7 +92,7 @@ const updateTask = asyncHandler(async (req, res) => {
       description,
       status,
       projectId: parseInt(projectId),
-      userId,
+      userId: parseInt(userId),
     },
   });
 
