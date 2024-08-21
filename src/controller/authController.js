@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const validator = require("validator");
 const fs = require("fs");
 const path = require("path");
 const asyncHandler = require("../middlewares/asyncHandler");
@@ -30,6 +31,18 @@ const register = asyncHandler(async (req, res) => {
 
   if (!name || !email || !password) {
     throw new Error("Please provide name, email, and password");
+  }
+
+  if (!validator.isEmail(email)) {
+    throw new Error("Please provide a valid email");
+  }
+
+  if (password.length < 5) {
+    throw new Error("Password must be at least 5 characters");
+  }
+
+  if (name.length < 5) {
+    throw new Error("Name must be at least 5 characters");
   }
 
   const userExist = await prisma.user.findUnique({

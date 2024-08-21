@@ -36,8 +36,18 @@ const getProjectById = asyncHandler(async (req, res) => {
 const createProject = asyncHandler(async (req, res) => {
   const { name, description, status } = req.body;
 
-  if (!name || !description) {
-    throw new Error("Please provide the project name and description");
+  if (!name || !description || !status) {
+    throw new Error("Please provide the project name, description, and status");
+  }
+
+  if (
+    status !== "Not Started" &&
+    status !== "In Progress" &&
+    status !== "Completed"
+  ) {
+    throw new Error(
+      "Invalid status. Status must be one of 'Not Started', 'In Progress', or 'Completed'"
+    );
   }
 
   const newProject = await prisma.project.create({
@@ -70,6 +80,16 @@ const updateProject = asyncHandler(async (req, res) => {
 
   if (!name || !description) {
     throw new Error("Please provide the project name and description");
+  }
+
+  if (
+    status !== "Not Started" &&
+    status !== "In Progress" &&
+    status !== "Completed"
+  ) {
+    throw new Error(
+      "Invalid status. Status must be one of 'Not Started', 'In Progress', or 'Completed'"
+    );
   }
 
   const updatedProject = await prisma.project.update({

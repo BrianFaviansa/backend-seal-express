@@ -31,9 +31,9 @@ const getTaskById = asyncHandler(async (req, res) => {
 const createTask = asyncHandler(async (req, res) => {
   const { name, description, status, projectId, userId } = req.body;
 
-  if (!name || !description || !projectId || !userId) {
+  if (!name || !description || !status || !projectId || !userId) {
     throw new Error(
-      "Please provide the task name, description, project ID, and user ID"
+      "Please provide the task name, description, status, project ID, and user ID"
     );
   }
 
@@ -45,6 +45,16 @@ const createTask = asyncHandler(async (req, res) => {
 
   if (!project) {
     throw new Error("Project not found");
+  }
+
+  if (
+    status !== "Not Started" &&
+    status !== "In Progress" &&
+    status !== "Completed"
+  ) {
+    throw new Error(
+      "Invalid status. Status must be one of 'Not Started', 'In Progress', or 'Completed'"
+    );
   }
 
   const newTask = await prisma.task.create({
@@ -77,9 +87,19 @@ const updateTask = asyncHandler(async (req, res) => {
     throw new Error("Task not found");
   }
 
-  if (!name || !description || !projectId || !userId) {
+  if (!name || !description || !status || !projectId || !userId) {
     throw new Error(
       "Please provide the task name, description, and project ID"
+    );
+  }
+
+  if (
+    status !== "Not Started" &&
+    status !== "In Progress" &&
+    status !== "Completed"
+  ) {
+    throw new Error(
+      "Invalid status. Status must be one of 'Not Started', 'In Progress', or 'Completed'"
     );
   }
 
