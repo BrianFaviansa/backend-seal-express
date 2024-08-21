@@ -2,9 +2,7 @@ const asyncHandler = require("../middlewares/asyncHandler");
 const prisma = require("../db");
 
 const getAllTasks = asyncHandler(async (req, res) => {
-  const tasks = await prisma.task.findMany({
-    // include: { user: true },
-  });
+  const tasks = await prisma.task.findMany();
 
   return res.status(200).json({
     message: "Tasks retrieved successfully",
@@ -31,12 +29,11 @@ const getTaskById = asyncHandler(async (req, res) => {
 });
 
 const createTask = asyncHandler(async (req, res) => {
-  const { name, description, status, projectId } = req.body;
-  const userId = req.user.id;
+  const { name, description, status, projectId, userId } = req.body;
 
-  if (!name || !description || !projectId) {
+  if (!name || !description || !projectId || !userId) {
     throw new Error(
-      "Please provide the task name, description, and project ID"
+      "Please provide the task name, description, project ID, and user ID"
     );
   }
 
@@ -58,8 +55,7 @@ const createTask = asyncHandler(async (req, res) => {
 
 const updateTask = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const { name, description, status, projectId } = req.body;
-  const userId = req.user.id;
+  const { name, description, status, projectId, userId } = req.body;
 
   const task = await prisma.task.findUnique({
     where: {
@@ -71,7 +67,7 @@ const updateTask = asyncHandler(async (req, res) => {
     throw new Error("Task not found");
   }
 
-  if (!name || !description || !projectId) {
+  if (!name || !description || !projectId || !userId) {
     throw new Error(
       "Please provide the task name, description, and project ID"
     );
